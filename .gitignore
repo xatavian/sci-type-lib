@@ -33,3 +33,7 @@
 
 # Build folder
 build/
+!build/.gitkeep
+
+# Dev environment folder
+.vscode
