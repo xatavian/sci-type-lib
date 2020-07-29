@@ -4,12 +4,14 @@
 #include <sstream>
 
 int main(int argc, char const **argv) {
-    sci::watt p { 50 };
+    // Assignments
     sci::volt u { 5 };
     sci::ampere i { 10 };
     sci::ampere i2 { 10 };
 
-    sci::decawatt p2 { 5 };
+    using namespace sci::literals;
+    sci::decawatt p2  = 5.0_daw;
+    sci::watt p = 50_w;
 
     // Comparisons
     std::cout << std::boolalpha;
