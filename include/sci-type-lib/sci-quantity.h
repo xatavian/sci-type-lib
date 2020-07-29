@@ -84,8 +84,84 @@ namespace sci {
         private:
             value_type v;
         };
+
+        /**
+         * @brief Ratio from base 2 to base 1
+         */ 
+        template<typename Ratio1, typename Ratio2>
+        constexpr long double _ratio_b2_to_b1() {
+            using R = std::ratio_divide<Ratio1, Ratio2>;
+            return static_cast<long double>(R::num) / R::den;
+        }
+
+        /**
+         * @brief Offset from base 2 to base 1
+         */
+        template<typename Ratio1, typename Offset1, typename Ratio2, typename Offset2>
+        constexpr long double _offset_b2_to_b1() {
+            using R = std::ratio_divide<Ratio1, Ratio2>;
+            using O = std::ratio_subtract<Offset1, std::ratio_multiply<R, Offset2>>;
+            return static_cast<long double>(O::num) / O::den;
+        }
+
+        // Unary operators
+        // ---
+        template<typename Unit, typename Ratio1, typename Offset1, typename T1>
+        quantity<Unit, Ratio1, Offset1, T1>
+        operator-(const quantity<Unit, Ratio1, Offset1, T1>& val) {
+            return quantity<Unit, Ratio1, Offset1, T1>(- val.value());
+        }
+        
+        template<typename Unit, typename Ratio1, typename Offset1, typename T1>
+        quantity<Unit, Ratio1, Offset1, T1>
+        operator+(const quantity<Unit, Ratio1, Offset1, T1>& val) {
+            return val;
+        }
+
+        // Binary operators
+        // ---
+        template<typename Unit, typename Ratio1, typename Offset1, typename T1,
+                                typename Ratio2, typename Offset2, typename T2>
+        quantity<Unit, Ratio1, Offset1, T1>
+        operator+(const quantity<Unit, Ratio1, Offset1, T1>& v1, const quantity<Unit, Ratio2, Offset2, T2>& v2) {
+            constexpr long double ratio = _ratio_b2_to_b1<Ratio1, Ratio2>();
+            constexpr long double offset = _offset_b2_to_b1<Ratio1, Offset1, Ratio2, Offset2>();
+            
+            return quantity<Unit, Ratio1, Offset1, T1>(v1.value() + ratio*v2.value() + offset);
+        }
+        
+        template<typename Unit, typename Ratio1, typename Offset1, typename T1,
+                                typename Ratio2, typename Offset2, typename T2>
+        quantity<Unit, Ratio1, Offset1, T1>
+        operator-(const quantity<Unit, Ratio1, Offset1, T1>& v1, const quantity<Unit, Ratio2, Offset2, T2>& v2) {
+            constexpr long double ratio = _ratio_b2_to_b1<Ratio1, Ratio2>();
+            constexpr long double offset = _offset_b2_to_b1<Ratio1, Offset1, Ratio2, Offset2>();
+            
+            return quantity<Unit, Scale, T>(v1.value() - ratio*v2.value() - offset);
+        }
+
+        template<typename Unit, typename Ratio1, typename Offset1, typename T1,
+                                typename Ratio2, typename Offset2, typename T2>
+        quantity<Unit, Ratio1, Offset1, T1>
+        operator*(const quantity<Unit, Ratio1, Offset1, T1>& v1, const quantity<Unit, Ratio2, Offset2, T2>& v2) {
+            constexpr long double ratio = _ratio_b2_to_b1<Ratio1, Ratio2>();
+            constexpr long double offset = _offset_b2_to_b1<Ratio1, Offset1, Ratio2, Offset2>();
+            
+            return quantity<detail::mult_helper<U1, U2>::unit, T>(v1.value() * (ratio*v2.value() + offset));
+        }
+
+        template<typename Unit, typename Ratio1, typename Offset1, typename T1,
+                                typename Ratio2, typename Offset2, typename T2>
+        quantity<Unit, Ratio1, Offset1, T1>
+        operator/(const quantity<Unit, Ratio1, Offset1, T1>& v1, const quantity<Unit, Ratio2, Offset2, T2>& v2) {
+            constexpr long double ratio = _ratio_b2_to_b1<Ratio1, Ratio2>();
+            constexpr long double offset = _offset_b2_to_b1<Ratio1, Offset1, Ratio2, Offset2>();
+            
+            return quantity<detail::mult_helper<U1, U2>::unit, T>(v1.value() / (ratio * v2.value() + offset));
+        }
     }
 
+    
     template<typename Unit, typename Scale = std::ratio<1>, typename Offset = std::ratio<0>, typename T = long double>
     using quantity = detail::quantity<Unit, Scale, Offset, T>;
 
