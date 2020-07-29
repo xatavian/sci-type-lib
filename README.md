@@ -25,6 +25,24 @@ Quantities are the real values that are manipulated with sci-type-lib. A quantit
 
 ## Getting started
 
+### Installation
+
+sci-type-lib is a header-only library so you can simply copy the include folder into your include path and you are good to go ! Alternatively, sci-type-lib uses CMake as a build management tool and if your project does as well, you can link it the library with the following:
+
+```cmake
+cmake_minimum_required( VERSION 3.xx )
+project(MyAwesomeProject VERSION 1.0.0)
+
+find_library(CMAKE_SCI_TYPE_LIB sci-type-lib REQUIRED
+             PATHS <path/to/the/library>)
+
+add_executable(app <source-files>)
+target_link_libraries(app PUBLIC CMAKE_SCI_TYPE_LIB)
+```
+
+
+### Minimal example
+
 Include the general `sci-type-lib/sci-lib.h` header to include all the features of the library at once. Then, use th quantites for your equations !
 
 ```c++
@@ -45,9 +63,14 @@ int main() {
 ### Quantities
 
 **Powers:** from `sci::milliwatt` to `sci::gigawatt`
+
 **Length:** from `sci::millimeter` to `sci::kilometer`
+
 **Mass:** from `sci::milligram` to `sci::ton`
+
 **Voltage:** from `sci::milivolt` to `sci::gigavolt`
+
 **Temperature:** from `sci::kelvin`, `sci::celsius`, `sci::fahrenheit`
+
 **Others:** `sci::ampere`, `sci::no_unit`, `sci::mol`, `sci::candela`
 
