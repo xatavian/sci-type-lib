@@ -183,7 +183,7 @@ sci::hectovolt operator""_hV(long double val) {
     return sci::hectovolt(val);
 }
 sci::hectovolt operator""_hV(unsigned long long val) {
-    return sci::hectovolt(val);
+    return sci::hectovolt(static_cast<long double>(val));
 }
 sci::decavolt operator""_daV(long double val) {
     return sci::decavolt(val);
